@@ -78,10 +78,10 @@ namespace Suplex.Security.AclModel.DataAccess.Utilities
                     emitter.Emit( new Scalar( null, ace.InheritedFrom.ToString() ) );
                 }
 
-                if( ace.SecurityPrincipalUId.HasValue )
+                if( ace.TrusteeUId.HasValue )
                 {
-                    emitter.Emit( new Scalar( null, nameof( ace.SecurityPrincipalUId ) ) );
-                    emitter.Emit( new Scalar( null, ace.SecurityPrincipalUId.ToString() ) );
+                    emitter.Emit( new Scalar( null, nameof( ace.TrusteeUId ) ) );
+                    emitter.Emit( new Scalar( null, ace.TrusteeUId.ToString() ) );
                 }
             }
 

@@ -77,7 +77,7 @@ namespace Suplex.Security.AclModel.DataAccess
             return store;
         }
 
-        void ShallowCloneTo(List<SecureObject> source, List<SecureObject> destination)
+        void ShallowCloneTo(IList<SecureObject> source, IList<SecureObject> destination)
         {
             foreach( SecureObject item in source )
             {
