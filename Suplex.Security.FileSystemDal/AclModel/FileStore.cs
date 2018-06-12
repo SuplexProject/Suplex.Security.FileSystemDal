@@ -40,7 +40,7 @@ namespace Suplex.Security.AclModel.DataAccess
             SecureObjects.ShallowCloneTo( clone.SecureObjects );
 
             return YamlHelpers.Serialize( clone,
-                serializeAsJson: serializeAsJson, formatJson: serializeAsJson, converter: new YamlAceConveter() );
+                serializeAsJson: serializeAsJson, formatJson: serializeAsJson, converter: new YamlAceConverter() );
         }
 
         public void ToYamlFile(string path = null, bool serializeAsJson = false)
@@ -60,19 +60,19 @@ namespace Suplex.Security.AclModel.DataAccess
             SecureObjects.ShallowCloneTo( clone.SecureObjects );
 
             YamlHelpers.SerializeFile( path, clone,
-                serializeAsJson: serializeAsJson, formatJson: serializeAsJson, converter: new YamlAceConveter() );
+                serializeAsJson: serializeAsJson, formatJson: serializeAsJson, converter: new YamlAceConverter() );
 
             CurrentPath = path;
         }
 
         public static FileStore FromYaml(string yaml)
         {
-            return YamlHelpers.Deserialize<FileStore>( yaml, converter: new YamlAceConveter() );
+            return YamlHelpers.Deserialize<FileStore>( yaml, converter: new YamlAceConverter(), c2: new SecurityDescriptorConverter() );
         }
 
         public static FileStore FromYamlFile(string path)
         {
-            FileStore store = YamlHelpers.DeserializeFile<FileStore>( path, converter: new YamlAceConveter() );
+            FileStore store = YamlHelpers.DeserializeFile<FileStore>( path, converter: new YamlAceConverter() );
             store.CurrentPath = path;
             return store;
         }

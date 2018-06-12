@@ -8,18 +8,18 @@ using YamlDotNet.Serialization;
 
 namespace Suplex.Security.AclModel.DataAccess.Utilities
 {
-    public class YamlAceConveter : IYamlTypeConverter
+    public class SecurityDescriptorConverter : IYamlTypeConverter
     {
         public bool Accepts(Type type)
         {
-            return typeof( IAccessControlEntry ).IsAssignableFrom( type );
+            return typeof( ISecurityDescriptor ).IsAssignableFrom( type );
         }
 
         public object ReadYaml(IParser parser, Type type)
         {
-            IAccessControlEntry ace = null;
+            ISecurityDescriptor sd = null;
 
-            if( type == typeof( IAccessControlEntry ) && parser.Current.GetType() == typeof( MappingStart ) )
+            if( type == typeof( ISecurityDescriptor ) && parser.Current.GetType() == typeof( MappingStart ) )
             {
                 parser.MoveNext(); // skip the sequence start
 
@@ -35,11 +35,21 @@ namespace Suplex.Security.AclModel.DataAccess.Utilities
                 }
                 parser.MoveNext();
 
-                if( props.ContainsKey( RightFields.RightType ) )
-                    ace = AccessControlEntryUtilities.MakeAceFromRightType( props[RightFields.RightType], props );
+                sd = new SecurityDescriptor();
+                foreach( string prop in props.Keys )
+                {
+                    if( prop.Equals( nameof( sd.DaclAllowInherit ) ) )
+                        sd.DaclAllowInherit = bool.Parse( props[prop] );
+                    //else if( prop.Equals( RightFields.Right ) )
+                    //    ace.SetRight( props[prop] );
+                    else if( prop.Equals( nameof( sd.SaclAllowInherit ) ) )
+                        sd.SaclAllowInherit = bool.Parse( props[prop] );
+                    else if( prop.Equals( nameof( sd.SaclAuditTypeFilter ) ) )
+                        sd.SaclAuditTypeFilter = (AuditType)Enum.Parse( typeof( AuditType ), props[prop] );
+                }
             }
 
-            return ace;
+            return sd;
         }
 
         public void WriteYaml(IEmitter emitter, object value, Type type)

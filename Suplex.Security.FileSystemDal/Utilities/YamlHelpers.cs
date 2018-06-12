@@ -56,7 +56,7 @@ namespace Suplex.Utilities.Serialization
             }
         }
 
-        public static T Deserialize<T>(string yaml, bool ignoreUnmatchedProperties = true, IYamlTypeConverter converter = null)
+        public static T Deserialize<T>(string yaml, bool ignoreUnmatchedProperties = true, IYamlTypeConverter converter = null, IYamlTypeConverter c2 = null)
         {
             using( StringReader reader = new StringReader( yaml ) )
             {
@@ -66,7 +66,7 @@ namespace Suplex.Utilities.Serialization
                     builder.IgnoreUnmatchedProperties();
 
                 if( converter != null )
-                    builder.WithTypeConverter( converter );
+                    builder.WithTypeConverter( converter ).WithTypeConverter(c2);
 
                 Deserializer deserializer = builder.Build();
                 return deserializer.Deserialize<T>( reader );
