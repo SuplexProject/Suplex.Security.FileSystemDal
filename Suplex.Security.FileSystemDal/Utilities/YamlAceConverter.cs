@@ -48,7 +48,6 @@ namespace Suplex.Security.AclModel.DataAccess.Utilities
 
             if( value is IAccessControlEntry ace )
             {
-
                 if( ace.UId.HasValue )
                 {
                     emitter.Emit( new Scalar( null, nameof( ace.UId ) ) );

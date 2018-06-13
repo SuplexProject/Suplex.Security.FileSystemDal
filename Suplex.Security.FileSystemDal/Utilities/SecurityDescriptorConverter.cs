@@ -17,25 +17,32 @@ namespace Suplex.Security.AclModel.DataAccess.Utilities
 
         public object ReadYaml(IParser parser, Type type)
         {
-            ISecurityDescriptor sd = null;
+            ISecurityDescriptor sd = new SecurityDescriptor
+            {
+                Dacl = new DiscretionaryAcl(),
+                Sacl = new SystemAcl()
+            };
 
             if( type == typeof( ISecurityDescriptor ) && parser.Current.GetType() == typeof( MappingStart ) )
             {
                 parser.MoveNext(); // skip the sequence start
 
                 Dictionary<string, string> props = new Dictionary<string, string>();
-                while( parser.Current.GetType() != typeof( MappingEnd ) )
+                while( parser.Current.GetType() != typeof( SequenceStart ) )
                 {
                     string prop = ((Scalar)parser.Current).Value;
                     parser.MoveNext();
-                    string value = ((Scalar)parser.Current).Value;
-                    parser.MoveNext();
 
-                    props[prop] = value;
+                    if( parser.Current is Scalar )
+                    {
+                        string value = ((Scalar)parser.Current).Value;
+                        parser.MoveNext();
+
+                        props[prop] = value;
+                    }
                 }
                 parser.MoveNext();
 
-                sd = new SecurityDescriptor();
                 foreach( string prop in props.Keys )
                 {
                     if( prop.Equals( nameof( sd.DaclAllowInherit ) ) )
@@ -47,6 +54,11 @@ namespace Suplex.Security.AclModel.DataAccess.Utilities
                     else if( prop.Equals( nameof( sd.SaclAuditTypeFilter ) ) )
                         sd.SaclAuditTypeFilter = (AuditType)Enum.Parse( typeof( AuditType ), props[prop] );
                 }
+
+                YamlAceConverter yac = new YamlAceConverter();
+                while( parser.Current.GetType() != typeof( MappingEnd ) )
+                    yac.ReadYaml( parser, typeof( IAccessControlEntry ) );
+                parser.MoveNext();
             }
 
             return sd;
@@ -56,43 +68,16 @@ namespace Suplex.Security.AclModel.DataAccess.Utilities
         {
             emitter.Emit( new MappingStart( null, null, false, MappingStyle.Block ) );
 
-            if( value is IAccessControlEntry ace )
+            if( value is ISecurityDescriptor sd )
             {
+                emitter.Emit( new Scalar( null, nameof( sd.DaclAllowInherit ) ) );
+                emitter.Emit( new Scalar( null, sd.DaclAllowInherit.ToString() ) );
 
-                if( ace.UId.HasValue )
-                {
-                    emitter.Emit( new Scalar( null, nameof( ace.UId ) ) );
-                    emitter.Emit( new Scalar( null, ace.UId.ToString() ) );
-                }
+                emitter.Emit( new Scalar( null, nameof( sd.SaclAllowInherit ) ) );
+                emitter.Emit( new Scalar( null, sd.SaclAllowInherit.ToString() ) );
 
-                emitter.Emit( new Scalar( null, RightFields.RightType ) );
-                emitter.Emit( new Scalar( null, ace.RightData.RightType.AssemblyQualifiedName ) );
-                emitter.Emit( new Scalar( null, RightFields.Right ) );
-                emitter.Emit( new Scalar( null, ace.RightData.Name ) );
-
-                emitter.Emit( new Scalar( null, nameof( ace.Allowed ) ) );
-                emitter.Emit( new Scalar( null, ace.Allowed.ToString() ) );
-
-                if( ace is IAccessControlEntryAudit auditace )
-                {
-                    emitter.Emit( new Scalar( null, nameof( auditace.Denied ) ) );
-                    emitter.Emit( new Scalar( null, auditace.Denied.ToString() ) );
-                }
-
-                emitter.Emit( new Scalar( null, nameof( ace.Inheritable ) ) );
-                emitter.Emit( new Scalar( null, ace.Inheritable.ToString() ) );
-
-                if( ace.InheritedFrom.HasValue )
-                {
-                    emitter.Emit( new Scalar( null, nameof( ace.InheritedFrom ) ) );
-                    emitter.Emit( new Scalar( null, ace.InheritedFrom.ToString() ) );
-                }
-
-                if( ace.TrusteeUId.HasValue )
-                {
-                    emitter.Emit( new Scalar( null, nameof( ace.TrusteeUId ) ) );
-                    emitter.Emit( new Scalar( null, ace.TrusteeUId.ToString() ) );
-                }
+                emitter.Emit( new Scalar( null, nameof( sd.SaclAuditTypeFilter ) ) );
+                emitter.Emit( new Scalar( null, sd.SaclAuditTypeFilter.ToString() ) );
             }
 
             emitter.Emit( new MappingEnd() );

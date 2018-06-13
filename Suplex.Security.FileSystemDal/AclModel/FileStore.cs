@@ -67,7 +67,7 @@ namespace Suplex.Security.AclModel.DataAccess
 
         public static FileStore FromYaml(string yaml)
         {
-            return YamlHelpers.Deserialize<FileStore>( yaml, converter: new YamlAceConverter(), c2: new SecurityDescriptorConverter() );
+            return YamlHelpers.Deserialize<FileStore>( yaml, converter: new YamlAceConverter() );
         }
 
         public static FileStore FromYamlFile(string path)

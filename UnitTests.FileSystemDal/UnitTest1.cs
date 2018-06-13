@@ -27,17 +27,17 @@ SecureObjects:
     SaclAuditTypeFilter: SuccessAudit, FailureAudit, Information, Warning, Error
     Dacl:
     - UId: a86dac02-cad3-4a51-9b16-1a3b20dbab37
-      RightType: Suplex.Security.AclModel.FileSystemRight, Suplex.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+      RightType: Suplex.Security.AclModel.FileSystemRight, Suplex.Security.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
       Right: FullControl
       Allowed: True
       Inheritable: True
     - UId: 7fb267d9-b4ce-4d56-a052-02aa9e9855d5
-      RightType: Suplex.Security.AclModel.FileSystemRight, Suplex.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+      RightType: Suplex.Security.AclModel.FileSystemRight, Suplex.Security.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
       Right: List, Execute
       Allowed: False
       Inheritable: False
     - UId: e7ea73a3-a5ec-4f63-8461-66feec42bb12
-      RightType: Suplex.Security.AclModel.UIRight, Suplex.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+      RightType: Suplex.Security.AclModel.UIRight, Suplex.Security.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
       Right: Visible, Operate
       Allowed: True
       Inheritable: True
