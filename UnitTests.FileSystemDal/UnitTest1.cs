@@ -87,6 +87,12 @@ GroupMembership:
             };
             top.Security.Dacl = topdacl;
 
+            SystemAcl topsacl = new SystemAcl
+            {
+                new AccessControlEntryAudit<FileSystemRight>{ Allowed = true, Denied = true, Right = FileSystemRight.Execute}
+            };
+            top.Security.Sacl = topsacl;
+
             List<User> users = new List<User>
             {
                 new User{ Name = "x", IsBuiltIn = true, IsEnabled = true, IsLocal = true },

@@ -19,7 +19,7 @@ namespace Suplex.Security.AclModel.DataAccess.Utilities
         {
             IAccessControlEntry ace = null;
 
-            if( type == typeof( IAccessControlEntry ) && parser.Current.GetType() == typeof( MappingStart ) )
+            if( typeof( IAccessControlEntry ).IsAssignableFrom( type ) && parser.Current.GetType() == typeof( MappingStart ) )
             {
                 parser.MoveNext(); // skip the sequence start
 
@@ -35,8 +35,10 @@ namespace Suplex.Security.AclModel.DataAccess.Utilities
                 }
                 parser.MoveNext();
 
+                bool isAuditAce = typeof( IAccessControlEntryAudit ).IsAssignableFrom( type );
+
                 if( props.ContainsKey( RightFields.RightType ) )
-                    ace = AccessControlEntryUtilities.MakeAceFromRightType( props[RightFields.RightType], props );
+                    ace = AccessControlEntryUtilities.MakeAceFromRightType( props[RightFields.RightType], props, isAuditAce );
             }
 
             return ace;
