@@ -86,12 +86,15 @@ GroupMembership:
                 new AccessControlEntry<UIRight> { Right= UIRight.Operate | UIRight.Visible }
             };
             top.Security.Dacl = topdacl;
+            top.Security.DaclAllowInherit = false;
 
             SystemAcl topsacl = new SystemAcl
             {
                 new AccessControlEntryAudit<FileSystemRight>{ Allowed = true, Denied = true, Right = FileSystemRight.Execute}
             };
             top.Security.Sacl = topsacl;
+            top.Security.SaclAllowInherit = false;
+            top.Security.SaclAuditTypeFilter = AuditType.FailureAudit | AuditType.Error;
 
             List<User> users = new List<User>
             {

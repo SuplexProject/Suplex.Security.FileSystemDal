@@ -40,7 +40,7 @@ namespace Suplex.Security.AclModel.DataAccess
             SecureObjects.ShallowCloneTo( clone.SecureObjects );
 
             return YamlHelpers.Serialize( clone,
-                serializeAsJson: serializeAsJson, formatJson: serializeAsJson, converter: new YamlAceConverter() );
+                serializeAsJson: serializeAsJson, formatJson: serializeAsJson, emitDefaultValues: true, converter: new YamlAceConverter() );
         }
 
         public void ToYamlFile(string path = null, bool serializeAsJson = false)
