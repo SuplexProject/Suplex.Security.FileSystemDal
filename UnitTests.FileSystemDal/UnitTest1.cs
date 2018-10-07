@@ -112,20 +112,20 @@ GroupMembership:
 
             GroupMembershipItem mx = new GroupMembershipItem
             {
-                GroupUId = groups[0].UId.Value,
-                MemberUId = users[0].UId.Value,
+                GroupUId = groups[0].UId,
+                MemberUId = users[0].UId,
                 IsMemberUser = true
             };
             GroupMembershipItem my = new GroupMembershipItem
             {
-                GroupUId = groups[0].UId.Value,
-                MemberUId = users[1].UId.Value,
+                GroupUId = groups[0].UId,
+                MemberUId = users[1].UId,
                 IsMemberUser = true
             };
             GroupMembershipItem mz = new GroupMembershipItem
             {
-                GroupUId = groups[0].UId.Value,
-                MemberUId = groups[1].UId.Value,
+                GroupUId = groups[0].UId,
+                MemberUId = groups[1].UId,
                 IsMemberUser = false
             };
             List<GroupMembershipItem> gm = new List<GroupMembershipItem>

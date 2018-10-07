@@ -50,11 +50,8 @@ namespace Suplex.Security.AclModel.DataAccess.Utilities
 
             if( value is IAccessControlEntry ace )
             {
-                if( ace.UId.HasValue )
-                {
-                    emitter.Emit( new Scalar( null, nameof( ace.UId ) ) );
-                    emitter.Emit( new Scalar( null, ace.UId.ToString() ) );
-                }
+                emitter.Emit( new Scalar( null, nameof( ace.UId ) ) );
+                emitter.Emit( new Scalar( null, ace.UId.ToString() ) );
 
                 emitter.Emit( new Scalar( null, RightFields.RightType ) );
                 emitter.Emit( new Scalar( null, ace.RightData.RightType.AssemblyQualifiedName ) );
