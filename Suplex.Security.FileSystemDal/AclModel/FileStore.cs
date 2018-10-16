@@ -9,7 +9,7 @@ using YamlDotNet.Serialization;
 
 namespace Suplex.Security.AclModel.DataAccess
 {
-    public class FileStore : SuplexStore
+    public class FileStore : SuplexStore, ISuplexDalHost
     {
         MemoryDal _dal = null;
         [YamlIgnore]
@@ -23,9 +23,23 @@ namespace Suplex.Security.AclModel.DataAccess
                 return _dal;
             }
         }
+        IDataAccessLayer ISuplexDalHost.Dal => Dal;
+
+        public void Configure(object config)
+        {
+            string yaml = YamlHelpers.Serialize( config );
+            FileStoreConfig fsc = YamlHelpers.Deserialize<FileStoreConfig>( yaml );
+            FileStore store = FromYamlFile( fsc.FilePath );
+            SecureObjects = store.SecureObjects;
+            Users = store.Users;
+            Groups = store.Groups;
+            GroupMembership = store.GroupMembership;
+        }
+
 
         [YamlIgnore]
         public string CurrentPath { get; internal set; }
+
 
 
 
