@@ -152,7 +152,8 @@ GroupMembership:
 
 
             string x = dal.ToYaml();
-            FileSystemDal f = FileSystemDal.LoadFromYaml( x );
+            FileSystemDal f = new FileSystemDal();
+            f.FromYaml( x );
             f.CurrentPath = "meow.yaml";
             f.AutomaticallyPersistChanges = true;
 
@@ -171,6 +172,8 @@ GroupMembership:
 
             for( int i = 0; i < 50; i++ )
                 f.UpsertGroup( new Group { Name = $"{i}_{DateTime.Now.Ticks}" } );
+
+            f.WaitForExit();
 
             //Parallel.For( 0, 49, i =>
             //{

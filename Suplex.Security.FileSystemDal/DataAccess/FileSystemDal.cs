@@ -15,6 +15,12 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
         Store = new SuplexStore();
     }
 
+    public void WaitForExit()
+    {
+        if( SuplexItemSingletonProcessor.Instance.Queue.Count > 0 )
+            Thread.Sleep( 750 );
+    }
+
     public ISuplexDal Dal => this;
 
     public void Configure(object config)
@@ -41,72 +47,73 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
     override public User UpsertUser(User user)
     {
         User x = base.UpsertUser( user );
-        if( SaveChanges ) LockedSaveChanges();
+        if( SaveChanges ) LockedSaveChanges( user );
         return x;
     }
 
     override public void DeleteUser(Guid userUId)
     {
         base.DeleteUser( userUId );
-        if( SaveChanges ) LockedSaveChanges();
+        if( SaveChanges ) LockedSaveChanges( userUId );
     }
 
     override public Group UpsertGroup(Group group)
     {
         Group x = base.UpsertGroup( group );
-        if( SaveChanges ) LockedSaveChanges();
+        if( SaveChanges ) LockedSaveChanges( group );
         return x;
     }
 
     override public void DeleteGroup(Guid groupUId)
     {
         base.DeleteGroup( groupUId );
-        if( SaveChanges ) LockedSaveChanges();
+        if( SaveChanges ) LockedSaveChanges( groupUId );
     }
 
     override public GroupMembershipItem UpsertGroupMembership(GroupMembershipItem groupMembershipItem)
     {
         GroupMembershipItem x = base.UpsertGroupMembership( groupMembershipItem );
-        if( SaveChanges ) LockedSaveChanges();
+        if( SaveChanges ) LockedSaveChanges( groupMembershipItem );
         return x;
     }
 
     override public List<GroupMembershipItem> UpsertGroupMembership(List<GroupMembershipItem> groupMembershipItems)
     {
         List<GroupMembershipItem> x = base.UpsertGroupMembership( groupMembershipItems );
-        if( SaveChanges ) LockedSaveChanges();
+        if( SaveChanges ) LockedSaveChanges( groupMembershipItems );
         return x;
     }
 
     override public void DeleteGroupMembership(GroupMembershipItem groupMembershipItem)
     {
         base.DeleteGroupMembership( groupMembershipItem );
-        if( SaveChanges ) LockedSaveChanges();
+        if( SaveChanges ) LockedSaveChanges( groupMembershipItem );
     }
 
     override public ISecureObject UpsertSecureObject(ISecureObject secureObject)
     {
         ISecureObject x = base.UpsertSecureObject( secureObject );
-        if( SaveChanges ) LockedSaveChanges();
+        if( SaveChanges ) LockedSaveChanges( secureObject );
         return x;
     }
 
     override public void UpdateSecureObjectParentUId(ISecureObject secureObject, Guid? newParentUId)
     {
         base.UpdateSecureObjectParentUId( secureObject, newParentUId );
-        if( SaveChanges ) LockedSaveChanges();
+        if( SaveChanges ) LockedSaveChanges( secureObject );
     }
 
     override public void DeleteSecureObject(Guid secureObjectUId)
     {
         base.DeleteSecureObject( secureObjectUId );
-        if( SaveChanges ) LockedSaveChanges();
+        if( SaveChanges ) LockedSaveChanges( secureObjectUId );
     }
 
 
-    protected virtual void LockedSaveChanges()
+    protected virtual void LockedSaveChanges(object item)
     {
-        //return;
+        SuplexItemSingletonProcessor.Instance.Queue.Enqueue( new SuplexUpdateItem { Item = item } );
+        return;
 
         AutoResetEvent autoResetEvent = new AutoResetEvent( false );
 
@@ -185,26 +192,25 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
     {
         Store = YamlHelpers.DeserializeFile<SuplexStore>( path, converter: new YamlAceConverter() );
         CurrentPath = path;
+        SuplexItemSingletonProcessor.Instance.StartQueueWatcher( this );
     }
 
     public static FileSystemDal LoadFromYaml(string yaml)
     {
-        FileSystemDal fileSystemDal = new FileSystemDal
+        return new FileSystemDal
         {
             Store = YamlHelpers.Deserialize<SuplexStore>( yaml, converter: new YamlAceConverter() ),
             CurrentPath = null
         };
-        return fileSystemDal;
     }
 
     public static FileSystemDal LoadFromYamlFile(string path)
     {
-        FileSystemDal fileSystemDal = new FileSystemDal
+        return new FileSystemDal
         {
             Store = YamlHelpers.DeserializeFile<SuplexStore>( path, converter: new YamlAceConverter() ),
             CurrentPath = path
         };
-        return fileSystemDal;
     }
 
     void ShallowCloneTo(IList<SecureObject> source, IList<SecureObject> destination)
