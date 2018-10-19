@@ -15,11 +15,13 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
         Store = new SuplexStore();
     }
 
-    public void WaitForExit()
-    {
-        if( SuplexItemSingletonProcessor.Instance.Queue.Count > 0 )
-            Thread.Sleep( 750 );
-    }
+    //public void WaitForExit()
+    //{
+    //    SuplexItemSingletonProcessor.Instance.StartQueueWatcher( this );
+    //    SuplexItemSingletonProcessor.Instance.WaitForReadyToExit();
+    //}
+
+    //public bool IsWorking { get {return SuplexItemSingletonProcessor.Instance.Queue.Count > 0; } }
 
     public ISuplexDal Dal => this;
 
@@ -110,10 +112,14 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
     }
 
 
+    /// <summary>
+    /// This is only appropriate for slow-moving data, no concurrency, and not shared amongst processes.
+    /// </summary>
+    /// <param name="item"></param>
     protected virtual void LockedSaveChanges(object item)
     {
-        SuplexItemSingletonProcessor.Instance.Queue.Enqueue( new SuplexUpdateItem { Item = item } );
-        return;
+        //SuplexItemSingletonProcessor.Instance.Queue.Enqueue( new SuplexUpdateItem { Item = item } );
+        //return;
 
         AutoResetEvent autoResetEvent = new AutoResetEvent( false );
 
@@ -192,7 +198,6 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
     {
         Store = YamlHelpers.DeserializeFile<SuplexStore>( path, converter: new YamlAceConverter() );
         CurrentPath = path;
-        SuplexItemSingletonProcessor.Instance.StartQueueWatcher( this );
     }
 
     public static FileSystemDal LoadFromYaml(string yaml)

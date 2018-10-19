@@ -41,6 +41,32 @@ public sealed class SuplexItemSingletonProcessor
         }
     }
 
+    public void WaitForReadyToExit()
+    {
+        //Thread thread = new Thread( () =>
+        //{
+        //    while( Instance.Queue.Count > 0 )
+        //        Thread.Sleep( 500 );
+        //    ReadyToExit = true;
+        //} )
+        //{
+        //    IsBackground = true,
+        //    Name = "WaitThread"
+        //};
+        //thread.Start();
+        System.Timers.Timer SuplexPoller = new System.Timers.Timer( 500 )
+        {
+            Enabled = true
+        };
+        SuplexPoller.Elapsed += (s, e) =>
+        {
+            if( Instance.Queue.Count > 0 )
+                DrainQueue();
+            SuplexPoller.Enabled = false;
+        };
+    }
+
+
     bool _allowExit = false;
     public bool ReadyToExit = false;
     void DrainQueue()
@@ -50,8 +76,8 @@ public sealed class SuplexItemSingletonProcessor
             if( Instance.Queue.Count == 0 )
             {
                 Thread.Sleep( 500 ); //no pending actions available, pause
-                if( _allowExit )
-                    ReadyToExit = true;
+                //if( _allowExit )
+                //    ReadyToExit = true;
                 continue;
             }
             _allowExit = true;

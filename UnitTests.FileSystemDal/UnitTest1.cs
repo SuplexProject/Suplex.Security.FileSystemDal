@@ -173,12 +173,28 @@ GroupMembership:
             for( int i = 0; i < 50; i++ )
                 f.UpsertGroup( new Group { Name = $"{i}_{DateTime.Now.Ticks}" } );
 
-            f.WaitForExit();
-
             //Parallel.For( 0, 49, i =>
             //{
             //    f.UpsertGroup( new Group { Name = $"{i}_{DateTime.Now.Ticks}" } );
             //} );
+
+
+            //if( f.IsWorking )
+            //{
+            //    System.Timers.Timer SuplexPoller = new System.Timers.Timer( 1000 )
+            //    {
+            //        Enabled = true
+            //    };
+            //    SuplexPoller.Elapsed += (s, e) =>
+            //    {
+            //        while( f.IsWorking )
+            //            System.Threading.Thread.Sleep( 500 );
+            //        SuplexPoller.Enabled = false;
+            //    };
+            //}
+
+            //while( f.IsWorking )
+            //    f.WaitForExit();
 
             Assert.IsTrue( true );
         }
