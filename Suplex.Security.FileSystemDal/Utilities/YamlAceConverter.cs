@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using Suplex.Security.AclModel;
 
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace Suplex.Security.AclModel.DataAccess.Utilities
+namespace Suplex.Utilities.Serialization
 {
     public class YamlAceConverter : IYamlTypeConverter
     {

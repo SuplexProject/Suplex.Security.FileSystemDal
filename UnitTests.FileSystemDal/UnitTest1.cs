@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 using Suplex.Security.AclModel;
-using Suplex.Security.AclModel.DataAccess;
 using Suplex.Security.Principal;
 
 
-namespace UnitTests.FileSystemDal
+namespace UnitTests
 {
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            new UnitTest1().TestMethod1();
+        }
+    }
+
     [TestFixture]
     public class UnitTest1
     {
-        [Test]
+        [Test()]
         public void TestMethod1()
         {
             #region foo
@@ -135,31 +142,42 @@ GroupMembership:
 
 
 
-            FileStore store = new FileStore()
-            {
-                SecureObjects = new List<SecureObject>() { top },
-                Users = users,
-                Groups = groups,
-                GroupMembership = gm
-            };
+            FileSystemDal dal = new FileSystemDal() { };
+            dal.Store.SecureObjects = new List<SecureObject>() { top };
+            dal.Store.Users = users;
+            dal.Store.Groups = groups;
+            dal.Store.GroupMembership = gm;
 
-            User ux = store.Users.GetByName<User>( "x" );
+            User ux = dal.Store.Users.GetByName<User>( "x" );
 
 
-            string x = store.ToYaml();
-            FileStore f = FileStore.FromYaml( x );
+            string x = dal.ToYaml();
+            FileSystemDal f = FileSystemDal.LoadFromYaml( x );
+            f.CurrentPath = "meow.yaml";
+            f.AutomaticallyPersistChanges = true;
 
-            bool contains = f.GroupMembership.ContainsItem( mx );
+            bool contains = f.Store.GroupMembership.ContainsItem( mx );
 
             //bool ok = f.GroupMembership.Resolve( f.Groups, f.Users );
 
-            FileStore f2 = FileStore.FromYaml( foo );
+            //FileSystemDal f2 = FileSystemDal.LoadFromYaml( foo );
 
-            User u0 = new User { Name = "g" };
+            User u0 = new User { Name = "gurl" };
             User u1 = new User { Name = "f", UId = u0.UId };
 
             f.Dal.UpsertUser( u0 );
             f.Dal.UpsertUser( u1 );
+
+
+            for( int i = 0; i < 50; i++ )
+                f.UpsertGroup( new Group { Name = $"{i}_{DateTime.Now.Ticks}" } );
+
+            //Parallel.For( 0, 49, i =>
+            //{
+            //    f.UpsertGroup( new Group { Name = $"{i}_{DateTime.Now.Ticks}" } );
+            //} );
+
+            Assert.IsTrue( true );
         }
     }
 }

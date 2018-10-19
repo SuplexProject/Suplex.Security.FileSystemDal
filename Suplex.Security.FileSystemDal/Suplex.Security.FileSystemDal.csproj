@@ -47,8 +47,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AclModel\FileStore.cs" />
-    <Compile Include="AclModel\FileStoreConfig.cs" />
+    <Compile Include="DataAccess\FileSystemDal.cs" />
+    <Compile Include="DataAccess\FileSystemDalConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\YamlAceConverter.cs" />
     <Compile Include="Utilities\JsonHelpers.cs" />
