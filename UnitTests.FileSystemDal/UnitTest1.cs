@@ -170,13 +170,16 @@ GroupMembership:
             f.Dal.UpsertUser( u1 );
 
 
-            for( int i = 0; i < 50; i++ )
+            bool parallel = false;
+            if( parallel )
+                Parallel.For( 0, 49, i =>
+                {
+                    f.UpsertGroup( new Group { Name = $"{i}_{DateTime.Now.Ticks}" } );
+                } );
+            else
+                for( int i = 0; i < 50; i++ )
                 f.UpsertGroup( new Group { Name = $"{i}_{DateTime.Now.Ticks}" } );
 
-            //Parallel.For( 0, 49, i =>
-            //{
-            //    f.UpsertGroup( new Group { Name = $"{i}_{DateTime.Now.Ticks}" } );
-            //} );
 
 
             //if( f.IsWorking )

@@ -15,14 +15,6 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
         Store = new SuplexStore();
     }
 
-    //public void WaitForExit()
-    //{
-    //    SuplexItemSingletonProcessor.Instance.StartQueueWatcher( this );
-    //    SuplexItemSingletonProcessor.Instance.WaitForReadyToExit();
-    //}
-
-    //public bool IsWorking { get {return SuplexItemSingletonProcessor.Instance.Queue.Count > 0; } }
-
     public ISuplexDal Dal => this;
 
     public void Configure(object config)
@@ -49,78 +41,75 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
     override public User UpsertUser(User user)
     {
         User x = base.UpsertUser( user );
-        if( SaveChanges ) LockedSaveChanges( user );
+        if( SaveChanges ) LockedSaveChanges();
         return x;
     }
 
     override public void DeleteUser(Guid userUId)
     {
         base.DeleteUser( userUId );
-        if( SaveChanges ) LockedSaveChanges( userUId );
+        if( SaveChanges ) LockedSaveChanges();
     }
 
     override public Group UpsertGroup(Group group)
     {
         Group x = base.UpsertGroup( group );
-        if( SaveChanges ) LockedSaveChanges( group );
+        if( SaveChanges ) LockedSaveChanges();
         return x;
     }
 
     override public void DeleteGroup(Guid groupUId)
     {
         base.DeleteGroup( groupUId );
-        if( SaveChanges ) LockedSaveChanges( groupUId );
+        if( SaveChanges ) LockedSaveChanges();
     }
 
     override public GroupMembershipItem UpsertGroupMembership(GroupMembershipItem groupMembershipItem)
     {
         GroupMembershipItem x = base.UpsertGroupMembership( groupMembershipItem );
-        if( SaveChanges ) LockedSaveChanges( groupMembershipItem );
+        if( SaveChanges ) LockedSaveChanges();
         return x;
     }
 
     override public List<GroupMembershipItem> UpsertGroupMembership(List<GroupMembershipItem> groupMembershipItems)
     {
         List<GroupMembershipItem> x = base.UpsertGroupMembership( groupMembershipItems );
-        if( SaveChanges ) LockedSaveChanges( groupMembershipItems );
+        if( SaveChanges ) LockedSaveChanges();
         return x;
     }
 
     override public void DeleteGroupMembership(GroupMembershipItem groupMembershipItem)
     {
         base.DeleteGroupMembership( groupMembershipItem );
-        if( SaveChanges ) LockedSaveChanges( groupMembershipItem );
+        if( SaveChanges ) LockedSaveChanges();
     }
 
     override public ISecureObject UpsertSecureObject(ISecureObject secureObject)
     {
         ISecureObject x = base.UpsertSecureObject( secureObject );
-        if( SaveChanges ) LockedSaveChanges( secureObject );
+        if( SaveChanges ) LockedSaveChanges();
         return x;
     }
 
     override public void UpdateSecureObjectParentUId(ISecureObject secureObject, Guid? newParentUId)
     {
         base.UpdateSecureObjectParentUId( secureObject, newParentUId );
-        if( SaveChanges ) LockedSaveChanges( secureObject );
+        if( SaveChanges ) LockedSaveChanges();
     }
 
     override public void DeleteSecureObject(Guid secureObjectUId)
     {
         base.DeleteSecureObject( secureObjectUId );
-        if( SaveChanges ) LockedSaveChanges( secureObjectUId );
+        if( SaveChanges ) LockedSaveChanges();
     }
 
 
     /// <summary>
     /// This is only appropriate for slow-moving data, no concurrency, and not shared amongst processes.
+    /// In other words, this isn't good enough to use for anything other than a light demo.
     /// </summary>
-    /// <param name="item"></param>
-    protected virtual void LockedSaveChanges(object item)
+    protected virtual void LockedSaveChanges()
     {
-        //SuplexItemSingletonProcessor.Instance.Queue.Enqueue( new SuplexUpdateItem { Item = item } );
-        //return;
-
         AutoResetEvent autoResetEvent = new AutoResetEvent( false );
 
         while( true )
