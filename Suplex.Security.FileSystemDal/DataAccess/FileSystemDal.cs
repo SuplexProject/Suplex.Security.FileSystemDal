@@ -71,9 +71,9 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
         return x;
     }
 
-    override public List<GroupMembershipItem> UpsertGroupMembership(List<GroupMembershipItem> groupMembershipItems)
+    override public IEnumerable<GroupMembershipItem> UpsertGroupMembership(IEnumerable<GroupMembershipItem> groupMembershipItems)
     {
-        List<GroupMembershipItem> x = base.UpsertGroupMembership( groupMembershipItems );
+        IEnumerable<GroupMembershipItem> x = base.UpsertGroupMembership( groupMembershipItems );
         if( SaveChanges ) LockedSaveChanges();
         return x;
     }
