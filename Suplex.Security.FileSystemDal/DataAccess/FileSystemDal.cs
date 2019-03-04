@@ -8,6 +8,8 @@ using Suplex.Security.DataAccess;
 using Suplex.Security.Principal;
 using Suplex.Utilities.Serialization;
 
+using YamlDotNet.Serialization;
+
 public class FileSystemDal : MemoryDal, ISuplexDalHost
 {
     public FileSystemDal()
@@ -152,7 +154,8 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
         Store.SecureObjects.ShallowCloneTo( clone.SecureObjects );
 
         return YamlHelpers.Serialize( clone,
-            serializeAsJson: serializeAsJson, formatJson: serializeAsJson, emitDefaultValues: true, converter: new YamlAceConverter() );
+            serializeAsJson: serializeAsJson, formatJson: serializeAsJson, emitDefaultValues: true,
+            converters: new IYamlTypeConverter[] { new YamlAceConverter(), new YamlAceConverterConverter() } );
     }
 
     public void ToYamlFile(string path = null, bool serializeAsJson = false)
@@ -172,20 +175,21 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
         Store.SecureObjects.ShallowCloneTo( clone.SecureObjects );
 
         YamlHelpers.SerializeFile( path, clone,
-            serializeAsJson: serializeAsJson, formatJson: serializeAsJson, emitDefaultValues: true, converter: new YamlAceConverter() );
+            serializeAsJson: serializeAsJson, formatJson: serializeAsJson, emitDefaultValues: true,
+            converters: new IYamlTypeConverter[] { new YamlAceConverter(), new YamlAceConverterConverter() } );
 
         CurrentPath = path;
     }
 
     public void FromYaml(string yaml)
     {
-        Store = YamlHelpers.Deserialize<SuplexStore>( yaml, converter: new YamlAceConverter() );
+        Store = YamlHelpers.Deserialize<SuplexStore>( yaml, converters: new IYamlTypeConverter[] { new YamlAceConverter(), new YamlAceConverterConverter() } );
         CurrentPath = null;
     }
 
     public void FromYamlFile(string path)
     {
-        Store = YamlHelpers.DeserializeFile<SuplexStore>( path, converter: new YamlAceConverter() );
+        Store = YamlHelpers.DeserializeFile<SuplexStore>( path, converters: new IYamlTypeConverter[] { new YamlAceConverter(), new YamlAceConverterConverter() } );
         CurrentPath = path;
     }
 
@@ -193,7 +197,7 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
     {
         return new FileSystemDal
         {
-            Store = YamlHelpers.Deserialize<SuplexStore>( yaml, converter: new YamlAceConverter() ),
+            Store = YamlHelpers.Deserialize<SuplexStore>( yaml, converters: new IYamlTypeConverter[] { new YamlAceConverter(), new YamlAceConverterConverter() } ),
             CurrentPath = null
         };
     }
@@ -202,7 +206,7 @@ public class FileSystemDal : MemoryDal, ISuplexDalHost
     {
         return new FileSystemDal
         {
-            Store = YamlHelpers.DeserializeFile<SuplexStore>( path, converter: new YamlAceConverter() ),
+            Store = YamlHelpers.DeserializeFile<SuplexStore>( path, converters: new IYamlTypeConverter[] { new YamlAceConverter(), new YamlAceConverterConverter() } ),
             CurrentPath = path
         };
     }
