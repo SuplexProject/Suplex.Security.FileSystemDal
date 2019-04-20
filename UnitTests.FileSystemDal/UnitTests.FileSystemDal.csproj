@@ -53,16 +53,13 @@
       <HintPath>..\packages\NUnit.3.10.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Suplex.Security.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Suplex.Security.Core.1.0.19063\lib\net461\Suplex.Security.Core.dll</HintPath>
+      <HintPath>..\packages\Suplex.Security.Core.1.0.19075\lib\net461\Suplex.Security.Core.dll</HintPath>
     </Reference>
     <Reference Include="Suplex.Security.Utilities.Yaml, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Suplex.Security.Utilities.Yaml.1.0.19063\lib\net461\Suplex.Security.Utilities.Yaml.dll</HintPath>
+      <HintPath>..\packages\Suplex.Security.Utilities.Yaml.1.0.19109\lib\net461\Suplex.Security.Utilities.Yaml.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="YamlDotNet, Version=5.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
-      <HintPath>..\packages\YamlDotNet.Signed.5.2.1\lib\net45\YamlDotNet.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UnitTest1.cs" />
